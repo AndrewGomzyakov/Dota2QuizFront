@@ -13,7 +13,7 @@
 
         <variable
             name="binding"
-            type="me.tatarka.bindingcollectionadapter2.ItemBinding&lt;Dota2EntityViewModel>" />
+            type="me.tatarka.bindingcollectionadapter2.ItemBinding&lt;Dota2EntityViewModel&gt;" />
         
     </data>
 

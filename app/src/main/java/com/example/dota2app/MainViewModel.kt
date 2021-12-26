@@ -17,9 +17,12 @@ class MainViewModel : ViewModel() {
 
         viewModelScope.launch {
 
-            val result = retrofit.getItemsIds()
-            dota2Items.add(mapToEntity(result[0]))
+            val result = retrofit.getFirstGridColumnItems()
+            for(i in result){
+                dota2Items.add(mapToEntity(i))
+            }
         }
+
 
     }
 

@@ -4,5 +4,9 @@ import retrofit2.http.GET
 
 interface ApiService {
     @GET("grids/0/0")
-    suspend fun getItemsIds() : List<Dota2Item>
+    suspend fun getFirstGridColumnItems() : List<Dota2Item>
+
+    @GET("grids/0/1")
+    suspend fun getSecondGridColumnItems() : List<Dota2Item>
+
 }
