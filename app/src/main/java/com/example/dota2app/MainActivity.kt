@@ -15,12 +15,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_main)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        val viewModel = MainViewModel(this.application)
+        val viewModel = MainViewModel()
         binding.vm = viewModel
         binding.binding = ItemBinding.of { itemBinding, _, itemViewModel ->
             itemBinding.set(BR.item, R.layout.dota_2_item).bindExtra(BR.parent, viewModel)
         }
         viewModel.loadItems()
+
+        viewModel.toastLiveData.observe(this) { text ->
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+        }
 
         super.onCreate(savedInstanceState)
     }

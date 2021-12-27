@@ -1,19 +1,18 @@
 package com.example.dota2app
 
-import android.app.Application
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.util.Base64
-import android.widget.Toast
 import androidx.databinding.ObservableArrayList
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.RequestBody
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel : ViewModel() {
 
     val dota2ItemsFirstColumn = ObservableArrayList<Dota2EntityViewModel>()
     val dota2ItemsSecondColumn = ObservableArrayList<Dota2EntityViewModel>()
@@ -28,35 +27,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val answer = ObservableArrayList<Dota2EntityViewModel>()
 
+    val toastLiveData = MutableLiveData<String>()
+
+    private val retrofit = RetrofitClient.getClient().create(ApiService::class.java)
+
 
     fun loadItems() {
-        val retrofit = RetrofitClient.getClient().create(ApiService::class.java)
+        loadInto(dota2ItemsFirstColumn, 0)
+        loadInto(dota2ItemsSecondColumn, 1)
+        loadInto(dota2ItemsThirdColumn, 2)
+        loadInto(dota2ItemsFourthColumn, 3)
+        loadInto(dota2ItemsFifthColumn, 4)
+    }
 
+    fun loadInto(list: ObservableArrayList<Dota2EntityViewModel>, id: Int) {
         viewModelScope.launch {
-
-            var result = retrofit.getGridColumnItems(0)
+            val result = retrofit.getGridColumnItems(id)
             for (i in result) {
-                dota2ItemsFirstColumn.add(mapToViewModel(i))
-            }
-            result = retrofit.getGridColumnItems(1)
-            for (i in result) {
-                dota2ItemsSecondColumn.add(mapToViewModel(i))
-            }
-            result = retrofit.getGridColumnItems(2)
-            for (i in result) {
-                dota2ItemsThirdColumn.add(mapToViewModel(i))
-            }
-            result = retrofit.getGridColumnItems(3)
-            for (i in result) {
-                dota2ItemsFourthColumn.add(mapToViewModel(i))
-            }
-            result = retrofit.getGridColumnItems(4)
-            for (i in result) {
-                dota2ItemsFifthColumn.add(mapToViewModel(i))
+                list.add(mapToViewModel(i))
             }
         }
-
-
     }
 
     fun startQuiz() {
@@ -90,17 +80,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val isCorrectAnswer = retrofit.sendQuizAnswer(quiz.itemId, body)
                     answer.clear()
                     if (isCorrectAnswer) {
-                        Toast.makeText(
-                            getApplication<Application>().applicationContext,
-                            "Correct!!! Get new quiz!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        toastLiveData.postValue("Correct!!! Get new quiz!")
                     } else {
-                        Toast.makeText(
-                            getApplication<Application>().applicationContext,
-                            "Incorrect answer! Try again!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        toastLiveData.postValue("Incorrect answer! Try again!")
                     }
                 }
             }
