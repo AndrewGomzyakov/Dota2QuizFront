@@ -61,10 +61,10 @@ class MainViewModel : ViewModel() {
     fun sendQuizAnswer() {
         val retrofit = RetrofitClient.getClient().create(ApiService::class.java)
         viewModelScope.launch {
-            val jsonObjectString = toJson(answer)
-            val requestBody = jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
-
-            retrofit.sendQuizAnswer(quiz?.itemId, )
+//            val jsonObjectString = toJson(answer)
+//            val requestBody = jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
+//
+//            retrofit.sendQuizAnswer(quiz?.itemId, )
         }
     }
 
