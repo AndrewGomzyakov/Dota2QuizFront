@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Java/dota2App/Dota2QuizFront/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Java/dota2App/Dota2QuizFront/app/src/main/res/layout/dota_2_item.xml" value="0.5" />
         <entry key="..\:/Java/dota2App/dota2App/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Java/dota2App/dota2App/app/src/main/res/layout/dota_2_item.xml" value="0.5589123867069486" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22327898550724637" />

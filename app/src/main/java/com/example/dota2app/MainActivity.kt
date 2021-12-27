@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         binding.binding = ItemBinding.of { itemBinding, _, itemViewModel ->
             itemBinding.set(BR.item, R.layout.dota_2_item).bindExtra(BR.parent, viewModel)
         }
+//        binding.button3.setOnClickListener {
+//        }
         viewModel.loadItems()
         super.onCreate(savedInstanceState)
     }
