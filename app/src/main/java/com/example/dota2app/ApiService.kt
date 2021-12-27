@@ -13,6 +13,9 @@ interface ApiService {
     @GET("quiz")
     suspend fun getQuiz() : Quiz
 
+    @GET("items/{itemId}")
+    suspend fun getItem(@Path("itemId") itemId: String) : Dota2Item
+
     @POST("quiz/{itemId}")
     suspend fun sendQuizAnswer(@Path("itemId") itemId: String?, @Body requestBody: RequestBody) : Boolean
 }

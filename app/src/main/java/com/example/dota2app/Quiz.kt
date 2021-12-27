@@ -7,8 +7,8 @@ data class Quiz(
     val itemId: String,
 
     @SerializedName("numOfItems")
-    val numOfItems: Int?,
+    val numOfItems: Int,
 
     @SerializedName("numOfRecipes")
-    val numOfRecipes: Int?,
+    val numOfRecipes: Int,
 )
