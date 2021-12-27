@@ -22,7 +22,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val dota2ItemsFifthColumn = ObservableArrayList<Dota2EntityViewModel>()
 
     var quiz: Quiz? = null
-    var quizItem: Dota2EntityViewModel? = null
+
+    //    var quizItem: Dota2EntityViewModel? = null
+    val quizItem = ObservableArrayList<Dota2EntityViewModel>()
 
     val answer = ObservableArrayList<Dota2EntityViewModel>()
 
@@ -33,23 +35,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
 
             var result = retrofit.getGridColumnItems(0)
-            for(i in result){
+            for (i in result) {
                 dota2ItemsFirstColumn.add(mapToViewModel(i))
             }
             result = retrofit.getGridColumnItems(1)
-            for(i in result){
+            for (i in result) {
                 dota2ItemsSecondColumn.add(mapToViewModel(i))
             }
             result = retrofit.getGridColumnItems(2)
-            for(i in result){
+            for (i in result) {
                 dota2ItemsThirdColumn.add(mapToViewModel(i))
             }
             result = retrofit.getGridColumnItems(3)
-            for(i in result){
+            for (i in result) {
                 dota2ItemsFourthColumn.add(mapToViewModel(i))
             }
             result = retrofit.getGridColumnItems(4)
-            for(i in result){
+            for (i in result) {
                 dota2ItemsFifthColumn.add(mapToViewModel(i))
             }
         }
@@ -61,43 +63,47 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val retrofit = RetrofitClient.getClient().create(ApiService::class.java)
         answer.clear()
         viewModelScope.launch {
-            quiz = retrofit.getQuiz()
-            quizItem = mapToViewModel(retrofit.getItem(quiz!!.itemId))
-            var a = quiz
+            val quiz = retrofit.getQuiz().also { quiz = it }
+//            quizItem = mapToViewModel(retrofit.getItem(quiz.itemId))
+            with(quizItem) {
+                clear()
+                add(mapToViewModel(retrofit.getItem(quiz.itemId)))
+            }
         }
     }
 
     fun sendQuizAnswer() {
-        if (quiz != null && answer.size == quiz!!.numOfItems + quiz!!.numOfRecipes) {
-            val retrofit = RetrofitClient.getClient().create(ApiService::class.java)
-            viewModelScope.launch {
-                val a = JsonArray()
-                for (i in answer) {
-                    a.add(i.itemId)
-                }
-                a.toString()
-                val jsonObjectString = a.toString()
+        quiz?.let { quiz ->
+            if (answer.size == quiz.numOfItems + quiz.numOfRecipes) {
+                val retrofit = RetrofitClient.getClient().create(ApiService::class.java)
+                viewModelScope.launch {
+                    val json = JsonArray()
+                    for (i in answer) json.add(i.itemId)
+                    val jsonObjectString = json.toString()
+//                    val jsonObjectString = answer.forEach {json.add(it.itemId)}.toString()
 
-                val body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObjectString)
+                    val body = RequestBody.create(
+                        MediaType.parse("application/json; charset=utf-8"),
+                        jsonObjectString
+                    )
 
-                val isCorrectAnswer = retrofit.sendQuizAnswer(quiz?.itemId, body )
-                answer.clear()
-                if (isCorrectAnswer) {
-                    Toast.makeText(
-                        getApplication<Application>().applicationContext,
-                        "Correct!!! Get new quiz!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        getApplication<Application>().applicationContext,
-                        "Incorrect answer! Try again!",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val isCorrectAnswer = retrofit.sendQuizAnswer(quiz.itemId, body)
+                    answer.clear()
+                    if (isCorrectAnswer) {
+                        Toast.makeText(
+                            getApplication<Application>().applicationContext,
+                            "Correct!!! Get new quiz!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            getApplication<Application>().applicationContext,
+                            "Incorrect answer! Try again!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
-
-
         }
     }
 
@@ -108,7 +114,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun mapToViewModel(source : Dota2Item) : Dota2EntityViewModel {
+    private fun mapToViewModel(source: Dota2Item): Dota2EntityViewModel {
         val imageBytes = Base64.decode(source.icon, Base64.DEFAULT)
         val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         val drawable = BitmapDrawable(decodedImage);
